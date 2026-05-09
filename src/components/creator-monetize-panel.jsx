@@ -1,6 +1,8 @@
 import CreatorMonetizeHero from '@/assets/images/creator-monetize-hero.png';
 import config from '@/utils/config';
 
+const CORNER_STEP = 2;
+
 const MonetizeIcon = () => (
     <span
         aria-hidden
@@ -54,6 +56,55 @@ const CreatorMonetizePanel = ( { copy, onBack } ) => (
                 minWidth: 0,
             } }
         >
+            { copy.cornerLabel ? (
+                <div
+                    role="group"
+                    aria-label={ `${ CORNER_STEP }. ${ copy.cornerLead ? `${ copy.cornerLead } ` : '' }${ copy.cornerLabel }` }
+                    style={ {
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '12px',
+                        flexWrap: 'wrap',
+                    } }
+                >
+                    <span
+                        aria-hidden
+                        style={ {
+                            width: '36px',
+                            height: '36px',
+                            borderRadius: '50%',
+                            flexShrink: 0,
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            background: 'rgba(255,255,255,0.12)',
+                            border: '1px solid rgba(255,255,255,0.2)',
+                            boxShadow: '0 2px 12px rgba(0,0,0,0.12)',
+                            color: '#E8F0F7',
+                            fontSize: '15px',
+                            fontWeight: 700,
+                            lineHeight: 1,
+                        } }
+                    >
+                        { CORNER_STEP }
+                    </span>
+                    <div
+                        style={ {
+                            color: 'rgba(232, 240, 247, 0.95)',
+                            fontSize: '14px',
+                            fontWeight: 600,
+                            letterSpacing: '0.01em',
+                            lineHeight: 1.4,
+                        } }
+                    >
+                        { copy.cornerLead ? (
+                            <span style={ { fontWeight: 700 } }>{ copy.cornerLead }</span>
+                        ) : null }
+                        { copy.cornerLead && copy.cornerLabel ? ' ' : null }
+                        { copy.cornerLabel }
+                    </div>
+                </div>
+            ) : null }
             <button
                 type="button"
                 onClick={ onBack }

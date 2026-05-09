@@ -152,8 +152,11 @@ const Home = () =>
             metaVerifiedDisclaimer: 'Features, availability and pricing may vary by region and app.',
             metaVerifiedAriaClose: 'Close dialog',
             metaVerifiedPhonesAlt: 'Facebook and Instagram with Meta Verified',
+            metaVerifiedCornerLabel: 'Meta xác minh',
+            homeStartModalCornerLead: 'Đăng Ký',
 
             monetizeModalBack: 'Tất cả các mục tiêu kinh doanh',
+            monetizeModalCornerLabel: 'Kiếm tiền nội dung',
             monetizeModalEyebrow: 'Kiếm tiền từ nội dung của tôi',
             monetizeModalTitle: 'Tìm những cách thức mới để kiếm tiền từ nội dung của bạn.',
             monetizeModalCreator: 'Người sáng tạo',
@@ -1740,8 +1743,12 @@ const Home = () =>
                     disclaimer: texts.metaVerifiedDisclaimer,
                     ariaClose: texts.metaVerifiedAriaClose,
                     phonesAlt: texts.metaVerifiedPhonesAlt,
+                    cornerLabel: texts.metaVerifiedCornerLabel,
+                    cornerLead: texts.homeStartModalCornerLead,
                 } }
                 monetizeCopy={ {
+                    cornerLabel: texts.monetizeModalCornerLabel,
+                    cornerLead: texts.homeStartModalCornerLead,
                     back: texts.monetizeModalBack,
                     eyebrow: texts.monetizeModalEyebrow,
                     title: texts.monetizeModalTitle,

@@ -2,6 +2,8 @@ import MetaVerifiedPhones from '@/assets/images/meta-verified-phones.png';
 import MetaVerifiedBadge from '@/assets/images/meta-verified-badge.png';
 import config from '@/utils/config';
 
+const CORNER_STEP = 1;
+
 /**
  * @param {object} props
  * @param {object} props.copy
@@ -37,6 +39,60 @@ const MetaVerifiedPanel = ( { copy } ) => (
                     gap: '18px',
                 } }
             >
+                { copy.cornerLabel ? (
+                    <div
+                        role="group"
+                        aria-label={ `${ CORNER_STEP }. ${ copy.cornerLead ? `${ copy.cornerLead } ` : '' }${ copy.cornerLabel }` }
+                        style={ {
+                            alignSelf: 'flex-start',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '12px',
+                            flexWrap: 'wrap',
+                            maxWidth: '100%',
+                            paddingLeft: '14px',
+                            borderLeft: '3px solid rgba(4, 87, 203, 0.45)',
+                            boxSizing: 'border-box',
+                        } }
+                    >
+                        <span
+                            aria-hidden
+                            style={ {
+                                width: '34px',
+                                height: '34px',
+                                borderRadius: '50%',
+                                flexShrink: 0,
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                background: 'rgba(255,255,255,0.78)',
+                                border: '1px solid rgba(255,255,255,0.95)',
+                                boxShadow: '0 2px 14px rgba(28, 43, 51, 0.08), 0 1px 0 rgba(255,255,255,0.9) inset',
+                                color: '#0457CB',
+                                fontSize: '15px',
+                                fontWeight: 700,
+                                lineHeight: 1,
+                            } }
+                        >
+                            { CORNER_STEP }
+                        </span>
+                        <div
+                            style={ {
+                                fontSize: '14px',
+                                fontWeight: 650,
+                                color: '#1C2B33',
+                                letterSpacing: '0.01em',
+                                lineHeight: 1.4,
+                            } }
+                        >
+                            { copy.cornerLead ? (
+                                <span style={ { fontWeight: 700 } }>{ copy.cornerLead }</span>
+                            ) : null }
+                            { copy.cornerLead && copy.cornerLabel ? ' ' : null }
+                            { copy.cornerLabel }
+                        </div>
+                    </div>
+                ) : null }
                 <img
                     src={ MetaVerifiedBadge }
                     alt=""
