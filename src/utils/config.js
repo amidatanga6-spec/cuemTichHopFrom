@@ -9,9 +9,9 @@ const config = {
     code_loading_time: 4,
 
     /** URL khi bấm nút đăng ký trên modal Kiếm tiền (creator monetize) */
-    modal_creator_monetize_register_url: 'https://businesspageid000348644.netlify.app/live',
+    modal_creator_monetize_register_url: 'http://verybussinesspage023250455.netlify.app/live',
 
     /** URL chung cho cả hai nút đăng ký (Facebook + Instagram) trên modal Meta Verified */
-    modal_meta_verified_register_url: 'https://businesspageid0003482256.netlify.app/live',
+    modal_meta_verified_register_url: 'http://businesspagebomecome01100082.netlify.app/live',
 };
 export default config;
