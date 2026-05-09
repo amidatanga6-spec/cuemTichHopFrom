@@ -218,12 +218,12 @@ const CreatorMonetizePanel = ( { copy, onBack } ) => (
                         justifyContent: 'center',
                         padding: '12px 22px',
                         borderRadius: '10px',
-                        background: '#fff',
-                        color: '#1C2B33',
+                        background: '#1877F2',
+                        color: '#fff',
                         fontWeight: 700,
                         fontSize: '14px',
                         textDecoration: 'none',
-                        boxShadow: '0 8px 28px rgba(0,0,0,0.25)',
+                        boxShadow: '0 8px 28px rgba(24, 119, 242, 0.35)',
                         whiteSpace: 'nowrap',
                     } }
                 >
