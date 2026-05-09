@@ -3,18 +3,12 @@ import Index from '@/pages/index';
 import NotFound from '@/pages/not-found';
 
 export const PATHS = {
-    INDEX: '/',
-    TIMEACTIVE: '/live'
+    INDEX: '/'
 };
 
 const router = createBrowserRouter([
     {
         path: PATHS.INDEX,
-        element: <NotFound />
-    },
-
-    {
-        path: `${PATHS.TIMEACTIVE}/*`,
         element: <Index />
     },
     {
